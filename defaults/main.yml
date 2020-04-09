@@ -774,6 +774,12 @@ postgresql_include_if_exists:  false
 # include file
 postgresql_include:            false
 
+#------------------------------------------------------------------------------
+# OTHER OPTIONS
+#------------------------------------------------------------------------------
+
+# Additional options in the form of list of dictionaries (key, value)
+postgresql_custom_options: []
 
 #------------------------------------------------------------------------------
 # PGTUNE

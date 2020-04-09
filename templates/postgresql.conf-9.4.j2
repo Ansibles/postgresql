@@ -617,3 +617,8 @@ include_dir = '{{ postgresql_include_dir }}'			# include files ending in '.conf'
 #------------------------------------------------------------------------------
 
 # Add settings for extensions here
+{% for option in postgresql_custom_options %}
+{% for k,v in option.items() %}
+{{k}} = {{v}}
+{% endfor %}
+{% endfor %}
