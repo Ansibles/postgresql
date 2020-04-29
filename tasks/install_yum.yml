@@ -9,6 +9,14 @@
           name: ["ca-certificates","python-psycopg2", "python-pycurl", "glibc-common","epel-release","libselinux-python"]
           state: present
 
+      - name: PostgreSQL | Add PostgreSQL Common repository | yum
+        yum_repository:
+           name: postgresql-common
+           description: postgresql yum repo
+           baseurl: "{{ postgresql_common_yum_repository_baseurl }}"
+           gpgkey: "{{ postgresql_yum_repository_gpgkey }}"
+        when: postgresql_install_repository
+
       - name: PostgreSQL | Add PostgreSQL repository | yum
         yum_repository:
            name: postgresql
@@ -16,7 +24,7 @@
            baseurl: "{{ postgresql_yum_repository_baseurl }}"
            gpgkey: "{{ postgresql_yum_repository_gpgkey }}"
         when: postgresql_install_repository
-        
+
       - name: PostgreSQL | Make sure the dependencies are installed | yum
         yum:
          name: ["python-psycopg2", "python-pycurl", "glibc-common","libselinux-python"]
