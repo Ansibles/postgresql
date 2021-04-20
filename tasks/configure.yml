@@ -198,15 +198,35 @@
     name: "/etc/systemd/system/postgresql-{{ postgresql_version }}.service.d"
     state: directory
     mode: 0755
-  when: ansible_os_family == "RedHat"
-  notify: restart postgresql
+  when: 
+    - ansible_os_family == "RedHat"
+    - ansible_service_mgr == "systemd"
+  notify:
+    - reload systemd
+    - restart postgresql
 
 - name: PostgreSQL | Use the conf directory when starting the Postgres service | RedHat
   template:
     src: etc_systemd_system_postgresql.service.d_custom.conf.j2
     dest: "/etc/systemd/system/postgresql-{{ postgresql_version }}.service.d/custom.conf"
-  when: ansible_os_family == "RedHat"
+  when: 
+    - ansible_os_family == "RedHat"
+    - ansible_service_mgr == "systemd"
   register: postgresql_systemd_custom_conf
+  notify: 
+    - reload systemd
+    - restart postgresql
+
+- name: PostgreSQL | Use the conf directory when starting the Postgres service | RedHat | Upstart
+  template:
+    src: etc_sysconfig_pgsql_postgresql.j2
+    dest: "/etc/sysconfig/pgsql/postgresql-{{ postgresql_version }}"
+  when: 
+    - ansible_os_family == "RedHat"
+    - ansible_service_mgr == "upstart"
+  register: postgresql_upstart_custom_conf
+  notify:
+    - restart postgresql
 
 - name: PostgreSQL | Ensure the pid directory for PostgreSQL exists
   file:
@@ -221,4 +241,4 @@
   service:
     name: "{{ postgresql_service_name }}"
     state: reloaded
-  when: postgresql_configuration_pt1.changed or postgresql_configuration_pt2.changed or postgresql_configuration_pt3.changed or postgresql_systemd_custom_conf.changed
+  when: postgresql_configuration_pt1.changed or postgresql_configuration_pt2.changed or postgresql_configuration_pt3.changed or postgresql_systemd_custom_conf.changed or postgresql_upstart_custom_conf.changed
