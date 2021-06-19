@@ -114,6 +114,7 @@ postgresql_database_extensions:
 postgresql_users:
   - name: baz
     pass: pass
+    role_attr_flags: 'SUPERUSER,CREATEDB' # more options see https://docs.ansible.com/ansible/latest/modules/postgresql_user_module.html#parameter-role_attr_flags
     encrypted: yes  # if password should be encrypted, postgresql >= 10 does only accepts encrypted passwords
     state: "present"    # optional; one of 'present', 'absent'
 
